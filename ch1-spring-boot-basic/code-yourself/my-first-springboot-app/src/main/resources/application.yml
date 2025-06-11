@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: my-first-springboot-app
+  profiles:
+    active: sesac
