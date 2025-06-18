@@ -1,15 +1,15 @@
 package com.example.ch4labs.service;
 
 import com.example.ch4labs.domain.Review;
-import com.example.ch4labs.dto.ReviewCreateRequest;
-import com.example.ch4labs.dto.ReviewResponse;
-import com.example.ch4labs.dto.ReviewUpdateRequest;
+import com.example.ch4labs.dto.*;
 import com.example.ch4labs.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -26,8 +26,23 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewResponse> getAllReviews() {
-        return reviewRepository.findAll().stream().map(ReviewResponse::from).toList();
+    public ReviewPageResponse getAllReviews(ReviewSearchRequest searchRequest) {
+        Pageable pageable = PageRequest.of(searchRequest.getPage(), searchRequest.getSize());
+
+        // 검색어에 따른 조건 분기
+        Page<Review> pageReviews;
+        if (searchRequest.getBookTitle() != null) {
+            pageReviews = reviewRepository.findByBookTitle(searchRequest.getBookTitle(), pageable);
+        } else if (searchRequest.getAuthor() != null && searchRequest.getRating() != null) {
+            pageReviews = reviewRepository.findByAuthorAndRating(searchRequest.getAuthor(), searchRequest.getRating(), pageable);
+        } else if (searchRequest.getMinRating() != null && searchRequest.getMaxRating() != null) {
+            pageReviews = reviewRepository.findByRatingBetween(searchRequest.getMinRating(), searchRequest.getMaxRating(), pageable);
+        } else {
+            pageReviews = reviewRepository.findAll(pageable);
+        }
+        Page<ReviewResponse> reviews = pageReviews.map(ReviewResponse::from);
+
+        return ReviewPageResponse.from(reviews.getContent(), searchRequest, reviews.getTotalElements());
     }
 
     public ReviewResponse updateReview(Long id, ReviewUpdateRequest request) {
