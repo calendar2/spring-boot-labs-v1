@@ -13,7 +13,7 @@ public class ReviewResponse {
     private String author;
     private String bookTitle;
     private String bookAuthor;
-    private byte rating;
+    private Integer rating;
 
     public static ReviewResponse from(Review review) {
         return new ReviewResponse(

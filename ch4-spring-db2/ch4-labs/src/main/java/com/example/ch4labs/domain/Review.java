@@ -19,5 +19,5 @@ public class Review {
     private String bookTitle;
     @Column(name = "book_author")
     private String bookAuthor;
-    private byte rating;
+    private Integer rating;
 }

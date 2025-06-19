@@ -9,5 +9,5 @@ public class ReviewUpdateRequest {
     private String author;
     private String bookTitle;
     private String bookAuthor;
-    private byte rating;
+    private Integer rating;
 }

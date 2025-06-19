@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewQueryRepository {
     // 1. 도서 제목 키워드 검색 + 페이징
     @Query("SELECT r FROM Review r WHERE r.bookTitle LIKE %:bookTitle%")
     Page<Review> findByBookTitle(@Param("bookTitle") String bookTitle, Pageable pageable);

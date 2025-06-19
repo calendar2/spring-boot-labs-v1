@@ -10,7 +10,7 @@ public class ReviewCreateRequest {
     private String author;
     private String bookTitle;
     private String bookAuthor;
-    private byte rating;
+    private Integer rating;
 
     public Review toDomain() {
         Review review = new Review();

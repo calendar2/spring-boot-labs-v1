@@ -25,21 +25,29 @@ public class ReviewService {
         return ReviewResponse.from(saved);
     }
 
+//    @Transactional(readOnly = true)
+//    public ReviewPageResponse getAllReviews(ReviewSearchRequest searchRequest) {
+//        Pageable pageable = PageRequest.of(searchRequest.getPage(), searchRequest.getSize());
+//
+//        // 검색어에 따른 조건 분기
+//        Page<Review> pageReviews;
+//        if (searchRequest.getBookTitle() != null) {
+//            pageReviews = reviewRepository.findByBookTitle(searchRequest.getBookTitle(), pageable);
+//        } else if (searchRequest.getAuthor() != null && searchRequest.getRating() != null) {
+//            pageReviews = reviewRepository.findByAuthorAndRating(searchRequest.getAuthor(), searchRequest.getRating(), pageable);
+//        } else if (searchRequest.getMinRating() != null && searchRequest.getMaxRating() != null) {
+//            pageReviews = reviewRepository.findByRatingBetween(searchRequest.getMinRating(), searchRequest.getMaxRating(), pageable);
+//        } else {
+//            pageReviews = reviewRepository.findAll(pageable);
+//        }
+//        Page<ReviewResponse> reviews = pageReviews.map(ReviewResponse::from);
+//
+//        return ReviewPageResponse.from(reviews.getContent(), searchRequest, reviews.getTotalElements());
+//    }
+
     @Transactional(readOnly = true)
     public ReviewPageResponse getAllReviews(ReviewSearchRequest searchRequest) {
-        Pageable pageable = PageRequest.of(searchRequest.getPage(), searchRequest.getSize());
-
-        // 검색어에 따른 조건 분기
-        Page<Review> pageReviews;
-        if (searchRequest.getBookTitle() != null) {
-            pageReviews = reviewRepository.findByBookTitle(searchRequest.getBookTitle(), pageable);
-        } else if (searchRequest.getAuthor() != null && searchRequest.getRating() != null) {
-            pageReviews = reviewRepository.findByAuthorAndRating(searchRequest.getAuthor(), searchRequest.getRating(), pageable);
-        } else if (searchRequest.getMinRating() != null && searchRequest.getMaxRating() != null) {
-            pageReviews = reviewRepository.findByRatingBetween(searchRequest.getMinRating(), searchRequest.getMaxRating(), pageable);
-        } else {
-            pageReviews = reviewRepository.findAll(pageable);
-        }
+        Page<Review> pageReviews = reviewRepository.search(searchRequest);
         Page<ReviewResponse> reviews = pageReviews.map(ReviewResponse::from);
 
         return ReviewPageResponse.from(reviews.getContent(), searchRequest, reviews.getTotalElements());
